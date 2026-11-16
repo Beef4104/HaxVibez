@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # mac_changer_ifconfig.sh - MAC changer using ifconfig (course style)
+# Last Edited by Charles Duoto on November 16, 2026
 # Usage:
 #   ./mac_changer_ifconfig.sh <interface> [new_mac]
 # Examples:

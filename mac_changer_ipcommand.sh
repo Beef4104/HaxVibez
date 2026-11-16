@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # mac_changer.sh - Simple MAC address changer for lab use
+# Last Edited by Charles Duoto on November 16, 2026
 # Usage:
 #   ./mac_changer.sh <interface> [new_mac]
 # Examples:
