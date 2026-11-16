@@ -103,8 +103,11 @@ read -rp "Choice [1/2/3]: " ACTION
 CAP_PREFIX="${PWD}/capture_${BSSID//:/}"
 echo "[*] Writing capture to ${CAP_PREFIX}-01.cap"
 
-# Get the MAC of our interface for fakeauth
-OUR_MAC=$(ip link show "$IFACE" | grep -oP '(?<=link/ether )[^ ]+' || ifconfig "$IFACE" | grep -oE '([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | head -1)
+# Get the MAC of our interface for fakeauth (ignore errors so set -e doesn't kill us)
+OUR_MAC=$(ip link show "$IFACE" 2>/dev/null | grep -oP '(?<=link/ether )[^ ]+' || true)
+if [[ -z "$OUR_MAC" ]]; then
+    OUR_MAC=$(ifconfig "$IFACE" 2>/dev/null | grep -oE '([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | head -1 || true)
+fi
 
 if [[ "$ACTION" == "2" ]]; then
     echo "[*] Starting targeted capture in background..."
