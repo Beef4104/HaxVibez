@@ -33,23 +33,21 @@ echo
 echo "Select caplet:"
 echo "1) ARP spoof + sniff only"
 echo "2) ARP spoof + DNS spoof"
-echo "3) ARP spoof + HSTS hijack (HTTPS downgrade)"
+echo "3) ARP spoof + HSTS hijack (course version)"
+echo "4) ARP spoof + HSTS hijack (custom .corn + alert)"
 read -rp "Choice [1]: " CHOICE
 CHOICE="${CHOICE:-1}"
 
 case "$CHOICE" in
     1) CAPLET="$SCRIPT_DIR/arp_spoof.cap" ;;
     2) CAPLET="$SCRIPT_DIR/dns_spoof.cap" ;;
-    3) CAPLET="$SCRIPT_DIR/hstshijack.cap" ;;  # course/altered version if present
+    3) CAPLET="$SCRIPT_DIR/hstshijack.cap" ;;
+    4) CAPLET="$SCRIPT_DIR/hstshijack_custom.cap" ;;
     *) echo "[-] Invalid choice"; exit 1 ;;
 esac
 
 if [[ ! -f "$CAPLET" ]]; then
     echo "[-] Caplet not found: $CAPLET"
-    if [[ "$CHOICE" == "3" ]]; then
-        echo "[*] Note: hstshijack.cap is usually provided by the course image."
-        echo "[*] You can copy it here or run bettercap and load it manually."
-    fi
     exit 1
 fi
 
