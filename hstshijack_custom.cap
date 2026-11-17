@@ -24,3 +24,6 @@ set dns.spoof.domains          facebook.corn,*.facebook.corn,apple.corn,*.apple.
 # Enable modules
 http.proxy on
 dns.spoof on
+
+# Capture traffic (output path set by launcher)
+net.sniff on

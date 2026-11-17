@@ -20,5 +20,5 @@ set arp.spoof.fullduplex true
 # Start the spoof
 arp.spoof on
 
-# Start sniffing
+# Start sniffing (output path set by launcher)
 net.sniff on
